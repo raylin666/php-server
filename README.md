@@ -33,6 +33,53 @@ $container->bind(\Raylin666\Contract\EventDispatcherInterface::class, \Raylin666
 // 注册事件工厂
 $container->singleton(\Raylin666\Event\EventFactoryInterface::class, \Raylin666\Event\EventFactory::class);
 
+class MessageCallback extends \Raylin666\Server\Contract\EventCallbackAbstract
+{
+    public function register(): array
+    {
+        // TODO: Implement register() method.
+
+        return [];
+    }
+}
+
+class RequestCallback extends \Raylin666\Server\Contract\EventCallbackAbstract
+{
+    /**
+     * 回调事件注册
+     * @return array
+     */
+    public function register(): array
+    {
+        // TODO: Implement register() method.
+
+        return [
+            function () {
+                var_dump(1);
+            },
+            function ($request) {
+                var_dump($request);
+            },
+            [$this, 'request']
+        ];
+    }
+
+    public static function request()
+    {
+        var_dump('request');
+    }
+}
+
+class ReceiveCallback extends \Raylin666\Server\Contract\EventCallbackAbstract
+{
+    public function register(): array
+    {
+        // TODO: Implement register() method.
+
+        return [];
+    }
+}
+
 $config = [
     'mode' => SWOOLE_PROCESS,
     'servers' => [
@@ -43,7 +90,7 @@ $config = [
             'port' => 9501,
             'sock_type' => SWOOLE_SOCK_TCP,
             'callbacks' => [
-                \Raylin666\Server\SwooleEvent::ON_MESSAGE => [\Raylin666\Server\Bootstrap\Callback\MessageCallback::class, 'onMessage']
+                \Raylin666\Server\SwooleEvent::ON_MESSAGE => new MessageCallback()
             ],
         ],
         [
@@ -53,7 +100,7 @@ $config = [
             'port' => 9502,
             'sock_type' => SWOOLE_SOCK_TCP,
             'callbacks' => [
-                \Raylin666\Server\SwooleEvent::ON_REQUEST => [\Raylin666\Server\Bootstrap\Callback\RequestCallback::class, 'onRequest'],
+                \Raylin666\Server\SwooleEvent::ON_REQUEST => new RequestCallback()
             ],
         ],
         [
@@ -63,7 +110,7 @@ $config = [
             'port' => 9503,
             'sock_type' => SWOOLE_SOCK_TCP,
             'callbacks' => [
-                \Raylin666\Server\SwooleEvent::ON_RECEIVE   =>  [\Raylin666\Server\Bootstrap\Callback\ReceiveCallback::class, 'onReceive']
+                \Raylin666\Server\SwooleEvent::ON_RECEIVE   =>  new ReceiveCallback()
             ],
         ],
     ],

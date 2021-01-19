@@ -11,24 +11,6 @@
 
 namespace Raylin666\Server;
 
-use Raylin666\Server\Bootstrap\Callback\CloseCallback;
-use Raylin666\Server\Bootstrap\Callback\ConnectCallback;
-use Raylin666\Server\Bootstrap\Callback\FinishCallback;
-use Raylin666\Server\Bootstrap\Callback\HandShakeCallback;
-use Raylin666\Server\Bootstrap\Callback\ManagerStartCallback;
-use Raylin666\Server\Bootstrap\Callback\MessageCallback;
-use Raylin666\Server\Bootstrap\Callback\PacketCallback;
-use Raylin666\Server\Bootstrap\Callback\PipeMessageCallback;
-use Raylin666\Server\Bootstrap\Callback\ReceiveCallback;
-use Raylin666\Server\Bootstrap\Callback\RequestCallback;
-use Raylin666\Server\Bootstrap\Callback\ShutdownCallback;
-use Raylin666\Server\Bootstrap\Callback\StartCallback;
-use Raylin666\Server\Bootstrap\Callback\TaskCallback;
-use Raylin666\Server\Bootstrap\Callback\WorkerErrorCallback;
-use Raylin666\Server\Bootstrap\Callback\WorkerExitCallback;
-use Raylin666\Server\Bootstrap\Callback\WorkerStartCallback;
-use Raylin666\Server\Bootstrap\Callback\WorkerStopCallback;
-
 /**
  * Class SwooleEvent
  * @package Raylin666\Server
@@ -263,81 +245,36 @@ class SwooleEvent
     const ON_MANAGER_STOP = 'managerStop';
 
     /**
-     * it's not a swoole event.
-     */
-    const ON_BEFORE_MAIN_SERVER_START = 'beforeMainServerStart';
-
-    /**
-     * Swoole 回调事件
-     * @var array
-     */
-    protected static $swooleCallbackEvents = [
-        self::ON_CLOSE          =>  ['onClose',         CloseCallback::class],
-        self::ON_CONNECT        =>  ['onConnect',       ConnectCallback::class],
-        self::ON_FINISH         =>  ['onFinish',        FinishCallback::class],
-        self::ON_HAND_SHAKE     =>  ['onHandShake',     HandShakeCallback::class],
-        self::ON_MANAGER_START  =>  ['onManagerStart',  ManagerStartCallback::class],
-        self::ON_MESSAGE        =>  ['onMessage',       MessageCallback::class],
-        self::ON_PACKET         =>  ['onPacket',        PacketCallback::class],
-        self::ON_PIPE_MESSAGE   =>  ['onPipeMessage',   PipeMessageCallback::class],
-        self::ON_RECEIVE        =>  ['onReceive',       ReceiveCallback::class],
-        self::ON_REQUEST        =>  ['onRequest',       RequestCallback::class],
-        self::ON_SHUTDOWN       =>  ['onShutdown',      ShutdownCallback::class],
-        self::ON_START          =>  ['onStart',         StartCallback::class],
-        self::ON_TASK           =>  ['onTask',          TaskCallback::class],
-        self::ON_WORKER_ERROR   =>  ['onWorkerError',   WorkerErrorCallback::class],
-        self::ON_WORKER_EXIT    =>  ['onWorkerExit',    WorkerExitCallback::class],
-        self::ON_WORKER_START   =>  ['onWorkerStart',   WorkerStartCallback::class],
-        self::ON_WORKER_STOP    =>  ['onWorkerStop',    WorkerStopCallback::class],
-    ];
-
-    /**
-     * @param $event
-     * @return bool
-     */
-    public static function isSwooleEvent($event): bool
-    {
-        if (in_array($event, [
-            self::ON_BEFORE_MAIN_SERVER_START,
-        ])) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * 获取 Swoole 事件名称
+     * 获取 Swoole 回调事件
      * @return array
      */
     public static function getSwooleEvents(): array
     {
-        return array_keys(self::$swooleCallbackEvents);
+        return [
+            self::ON_REQUEST,
+            self::ON_WORKER_START,
+            self::ON_MESSAGE,
+            self::ON_RECEIVE,
+            self::ON_WORKER_STOP,
+            self::ON_WORKER_EXIT,
+            self::ON_WORKER_ERROR,
+            self::ON_TASK,
+            self::ON_START,
+            self::ON_SHUTDOWN,
+            self::ON_PIPE_MESSAGE,
+            self::ON_PACKET,
+            self::ON_MANAGER_START,
+            self::ON_HAND_SHAKE,
+            self::ON_FINISH,
+            self::ON_CONNECT,
+            self::ON_CLOSE,
+            self::ON_MANAGER_STOP,
+            self::ON_OPEN
+        ];
     }
 
     /**
-     * 获取 Swoole 默认回调事件
-     * @param array $events
-     * @return array
-     */
-    public static function getDefaultSwooleCallbackEvents(array $events = []): array
-    {
-        if ($events) {
-            $callback = [];
-            foreach ($events as $event) {
-                if (isset(self::$swooleCallbackEvents[$event])) {
-                    $callback[$event] = self::$swooleCallbackEvents[$event];
-                }
-            }
-
-            return $callback;
-        }
-
-        return self::$swooleCallbackEvents;
-    }
-
-    /**
-     * Swoole 事件绑定
+     * 注册 Swoole 事件绑定
      * @param              $server
      * @param string       $event
      * @param callable     $callback

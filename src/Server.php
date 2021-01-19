@@ -12,18 +12,13 @@
 namespace Raylin666\Server;
 
 use Swoole\Server as SwooleServer;
+use Psr\Container\ContainerInterface;
 use Swoole\Http\Server as SwooleHttpServer;
-use Raylin666\Contract\ContainerInterface;
-use Psr\EventDispatcher\EventDispatcherInterface;
-use Raylin666\Server\Exception\RuntimeException;
 use Raylin666\Server\Contract\ServerInterface;
+use Raylin666\Server\Exception\RuntimeException;
+use Psr\EventDispatcher\EventDispatcherInterface;
+use Raylin666\Server\Contract\EventCallbackAbstract;
 use Swoole\WebSocket\Server as SwooleWebSocketServer;
-use Raylin666\Server\Bootstrap\Callback\ManagerStartCallback;
-use Raylin666\Server\Bootstrap\Callback\StartCallback;
-use Raylin666\Server\Bootstrap\Callback\WorkerStartCallback;
-use Raylin666\Server\Bootstrap\Callback\WorkerStopCallback;
-use Raylin666\Server\Bootstrap\Callback\WorkerExitCallback;
-use Raylin666\Server\Bootstrap\Event\BeforeMainServerStart;
 use Raylin666\Server\Bootstrap\Event\BeforeServerStart;
 
 /**
@@ -71,14 +66,6 @@ class Server implements ServerInterface
     {
         $this->container = $container;
         $this->eventDispatcher = $eventDispatcher;
-
-        // 注册默认回调事件到容器
-        foreach (SwooleEvent::getDefaultSwooleCallbackEvents() as $callback) {
-            $callbackClass = $callback[1];
-            $container->bind($callbackClass, function () use ($callbackClass) {
-                return new $callbackClass($this->eventDispatcher);
-            });
-        }
     }
 
     /**
@@ -132,20 +119,10 @@ class Server implements ServerInterface
             // 服务不存在则构建服务,服务存在则添加监听
             if (! $this->server instanceof SwooleServer) {
                 $this->server = $this->makeServer($type, $host, $port, $config->getMode(), $sockType);
-                $callbacks = array_replace($this->defaultCallbacks(), $config->getCallbacks(), $callbacks);
+                $callbacks = array_replace($config->getCallbacks(), $callbacks);
                 $this->registerSwooleEvents($this->server, $callbacks, $name);
                 $this->server->set(array_replace($config->getSettings(), $server->getSettings()));
                 ServerManager::add($name, [$type, current($this->server->ports)]);
-
-                // 服务启动前置事件
-                if (class_exists(BeforeMainServerStart::class)) {
-                    $this->eventDispatcher->dispatch(
-                        new BeforeMainServerStart(
-                            $this->server,
-                            $config->toArray()
-                        )
-                    );
-                }
             } else {
                 /** @var bool|\Swoole\Server\Port $slaveServer */
                 $slaveServer = $this->server->addlistener($host, $port, $sockType);
@@ -251,62 +228,28 @@ class Server implements ServerInterface
     }
 
     /**
-     * @param \Swoole\Server\Port|SwooleServer $server
+     * @param        $server
+     * @param array  $events
+     * @param string $serverName
      */
     protected function registerSwooleEvents($server, array $events, string $serverName): void
     {
         foreach ($events as $event => $callback) {
-            if (! in_array($event, SwooleEvent::getSwooleEvents())) {
-                continue;
+            // 必须Swoole的回调事件, 必须继承自 EventCallbackAbstract
+            if (
+                (! in_array($event, SwooleEvent::getSwooleEvents()))
+                || (! $callback instanceof EventCallbackAbstract)
+            ) {
+                continue ;
             }
-            if (is_array($callback)) {
-                [$class_name, $method] = $callback;
-                $callback_key = sprintf('%s::%s', $class_name, $method);
-                if (array_key_exists($callback_key, $this->serverCallbacks)) {
-                    throw new RuntimeException(sprintf('%s will be replaced by %s. Each server should have its own onRequest callback. Please check your configs.', $this->serverCallbacks[$callback_key], $serverName));
+
+            SwooleEvent::on($server, $event, function (...$args) use ($callback) {
+                foreach ($callback->register() as $item) {
+                    call_user_func($item, ...$args);
                 }
+            });
 
-                $this->serverCallbacks[$callback_key] = $serverName;
-
-                $class = $this->container->get($class_name);
-
-                $callback = [$class, $method];
-            }
-
-            SwooleEvent::on($server, $event, $callback);
+            $this->serverCallbacks[sprintf('%s::%s', $event, get_class($callback))] = $serverName;
         }
-    }
-
-    /**
-     * Default Callbacks
-     * @return array
-     */
-    protected function defaultCallbacks()
-    {
-        $callback = [];
-
-        $eventCallback = SwooleEvent::getDefaultSwooleCallbackEvents([
-            SwooleEvent::ON_START,
-            SwooleEvent::ON_MANAGER_START,
-            SwooleEvent::ON_WORKER_START,
-            SwooleEvent::ON_WORKER_STOP,
-            SwooleEvent::ON_WORKER_EXIT,
-        ]);
-
-        foreach ($eventCallback as $event => $item) {
-            if (class_exists($item[1])) {
-                $callback[$event] = [$item[1], $item[0]];
-            }
-        }
-
-        if (empty($callback)) {
-            return [
-                SwooleEvent::ON_WORKER_START => function (SwooleServer $server, int $workerId) {
-                    printf('[%s::%d] Worker %d started.' . PHP_EOL, $server->host, $server->port, $workerId);
-                },
-            ];
-        }
-
-        return $callback;
     }
 }

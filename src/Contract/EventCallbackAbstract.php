@@ -9,37 +9,17 @@
 // | Author: kaka梦很美 <1099013371@qq.com>
 // +----------------------------------------------------------------------
 
-namespace Raylin666\Server\Bootstrap\Event;
-
-use Raylin666\Event\Event;
-use Raylin666\Server\SwooleEvent;
-use Swoole\Server;
+namespace Raylin666\Server\Contract;
 
 /**
- * Class OnManagerStart
- * @package Raylin666\Server\Bootstrap\Event
+ * Class EventCallbackAbstract
+ * @package Raylin666\Server\Contract
  */
-class OnManagerStart extends Event
+abstract class EventCallbackAbstract
 {
     /**
-     * @var Server
+     * 回调事件注册器
+     * @return array
      */
-    public $server;
-
-    /**
-     * OnManagerStart constructor.
-     * @param Server $server
-     */
-    public function __construct(Server $server)
-    {
-        $this->server = $server;
-    }
-
-    /**
-     * @return string
-     */
-    public function getEventAccessor(): string
-    {
-        return SwooleEvent::ON_MANAGER_START;
-    }
+    abstract public function register(): array;
 }
