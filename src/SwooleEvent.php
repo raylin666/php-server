@@ -11,6 +11,26 @@
 
 namespace Raylin666\Server;
 
+use Raylin666\Server\Callbacks\OnClose;
+use Raylin666\Server\Callbacks\OnConnect;
+use Raylin666\Server\Callbacks\OnFinish;
+use Raylin666\Server\Callbacks\OnHandShake;
+use Raylin666\Server\Callbacks\OnManagerStart;
+use Raylin666\Server\Callbacks\OnManagerStop;
+use Raylin666\Server\Callbacks\OnMessage;
+use Raylin666\Server\Callbacks\OnOpen;
+use Raylin666\Server\Callbacks\OnPacket;
+use Raylin666\Server\Callbacks\OnPipeMessage;
+use Raylin666\Server\Callbacks\OnReceive;
+use Raylin666\Server\Callbacks\OnRequest;
+use Raylin666\Server\Callbacks\OnShutdown;
+use Raylin666\Server\Callbacks\OnStart;
+use Raylin666\Server\Callbacks\OnTask;
+use Raylin666\Server\Callbacks\OnWorkerError;
+use Raylin666\Server\Callbacks\OnWorkerExit;
+use Raylin666\Server\Callbacks\OnWorkerStart;
+use Raylin666\Server\Callbacks\OnWorkerStop;
+
 /**
  * Class SwooleEvent
  * @package Raylin666\Server
@@ -251,25 +271,25 @@ class SwooleEvent
     public static function getSwooleEvents(): array
     {
         return [
-            self::ON_REQUEST,
-            self::ON_WORKER_START,
-            self::ON_MESSAGE,
-            self::ON_RECEIVE,
-            self::ON_WORKER_STOP,
-            self::ON_WORKER_EXIT,
-            self::ON_WORKER_ERROR,
-            self::ON_TASK,
-            self::ON_START,
-            self::ON_SHUTDOWN,
-            self::ON_PIPE_MESSAGE,
-            self::ON_PACKET,
-            self::ON_MANAGER_START,
-            self::ON_HAND_SHAKE,
-            self::ON_FINISH,
-            self::ON_CONNECT,
-            self::ON_CLOSE,
-            self::ON_MANAGER_STOP,
-            self::ON_OPEN
+            self::ON_REQUEST        =>  OnRequest::class,
+            self::ON_WORKER_START   =>  OnWorkerStart::class,
+            self::ON_MESSAGE        =>  OnMessage::class,
+            self::ON_RECEIVE        =>  OnReceive::class,
+            self::ON_WORKER_STOP    =>  OnWorkerStop::class,
+            self::ON_WORKER_EXIT    =>  OnWorkerExit::class,
+            self::ON_WORKER_ERROR   =>  OnWorkerError::class,
+            self::ON_TASK           =>  OnTask::class,
+            self::ON_START          =>  OnStart::class,
+            self::ON_SHUTDOWN       =>  OnShutdown::class,
+            self::ON_PIPE_MESSAGE   =>  OnPipeMessage::class,
+            self::ON_PACKET         =>  OnPacket::class,
+            self::ON_MANAGER_START  =>  OnManagerStart::class,
+            self::ON_HAND_SHAKE     =>  OnHandShake::class,
+            self::ON_FINISH         =>  OnFinish::class,
+            self::ON_CONNECT        =>  OnConnect::class,
+            self::ON_CLOSE          =>  OnClose::class,
+            self::ON_MANAGER_STOP   =>  OnManagerStop::class,
+            self::ON_OPEN           =>  OnOpen::class,
         ];
     }
 

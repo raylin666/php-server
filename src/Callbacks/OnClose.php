@@ -9,19 +9,40 @@
 // | Author: kaka梦很美 <1099013371@qq.com>
 // +----------------------------------------------------------------------
 
-namespace Raylin666\Server\Contract;
+namespace Raylin666\Server\Callbacks;
 
-use Raylin666\Contract\FactoryInterface;
+use Swoole\Server;
 
 /**
- * Interface ServerFactoryInterface
- * @package Raylin666\Server\Contract
+ * Class OnClose
+ * @package Raylin666\Server\Callbacks
  */
-interface ServerFactoryInterface extends FactoryInterface
+class OnClose extends Callback
 {
     /**
-     * @param array $config
-     * @return ServerInterface
+     * @var Server
      */
-    public function make(array $config): ServerInterface;
+    public $server;
+
+    /**
+     * @var int
+     */
+    public $fd;
+
+    /**
+     * @var int
+     */
+    public $reactorId;
+
+    /**
+     * @param Server $server
+     * @param int    $fd
+     * @param int    $reactorId
+     */
+    public function __invoke(Server $server, int $fd, int $reactorId)
+    {
+        $this->server = $server;
+        $this->fd = $fd;
+        $this->reactorId = $reactorId;
+    }
 }

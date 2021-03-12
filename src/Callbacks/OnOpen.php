@@ -9,17 +9,34 @@
 // | Author: kaka梦很美 <1099013371@qq.com>
 // +----------------------------------------------------------------------
 
-namespace Raylin666\Server\Contract;
+namespace Raylin666\Server\Callbacks;
+
+use Swoole\WebSocket\Server;
 
 /**
- * Class EventCallbackAbstract
- * @package Raylin666\Server\Contract
+ * Class OnOpen
+ * @package Raylin666\Server\Callbacks
  */
-abstract class EventCallbackAbstract
+class OnOpen extends Callback
 {
     /**
-     * 回调事件注册器
-     * @return array
+     * @var Server
      */
-    abstract public function register(): array;
+    public $server;
+
+    /**
+     * @var
+     */
+    public $request;
+
+    /**
+     * @param Server $server
+     * @param int    $fd
+     * @param int    $reactorId
+     */
+    public function __invoke(Server $server, $request)
+    {
+        $this->server = $server;
+        $this->request = $request;
+    }
 }

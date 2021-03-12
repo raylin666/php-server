@@ -9,20 +9,40 @@
 // | Author: kaka梦很美 <1099013371@qq.com>
 // +----------------------------------------------------------------------
 
-namespace Raylin666\Server;
+namespace Raylin666\Server\Callbacks;
 
-use Raylin666\Utils\Traits\Container;
+use Swoole\Server;
 
 /**
- * Class ServerManager
- * @package Raylin666\Server
+ * Class OnPacket
+ * @package Raylin666\Server\Callbacks
  */
-class ServerManager
+class OnPacket extends Callback
 {
-    use Container;
+    /**
+     * @var Server
+     */
+    public $server;
+
+    /**
+     * @var string
+     */
+    public $data;
 
     /**
      * @var array
      */
-    protected static $container = [];
+    public $clientInfo;
+
+    /**
+     * @param Server $server
+     * @param string $data
+     * @param array  $clientInfo
+     */
+    public function __invoke(Server $server, string $data, array $clientInfo)
+    {
+        $this->server = $server;
+        $this->data = $data;
+        $this->clientInfo = $clientInfo;
+    }
 }

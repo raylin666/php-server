@@ -9,20 +9,33 @@
 // | Author: kaka梦很美 <1099013371@qq.com>
 // +----------------------------------------------------------------------
 
-namespace Raylin666\Server;
+namespace Raylin666\Server\Callbacks;
 
-use Raylin666\Utils\Traits\Container;
+use Swoole\WebSocket\Server;
 
 /**
- * Class ServerManager
- * @package Raylin666\Server
+ * Class OnMessage
+ * @package Raylin666\Server\Callbacks
  */
-class ServerManager
+class OnMessage extends Callback
 {
-    use Container;
+    /**
+     * @var Server
+     */
+    public $server;
 
     /**
-     * @var array
+     * @var
      */
-    protected static $container = [];
+    public $frame;
+
+    /**
+     * @param Server $server
+     * @param        $frame
+     */
+    public function __invoke(Server $server, $frame)
+    {
+        $this->server = $server;
+        $this->frame = $frame;
+    }
 }

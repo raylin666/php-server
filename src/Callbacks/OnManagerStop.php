@@ -9,20 +9,26 @@
 // | Author: kaka梦很美 <1099013371@qq.com>
 // +----------------------------------------------------------------------
 
-namespace Raylin666\Server;
+namespace Raylin666\Server\Callbacks;
 
-use Raylin666\Utils\Traits\Container;
+use Swoole\Server;
 
 /**
- * Class ServerManager
- * @package Raylin666\Server
+ * Class OnManagerStop
+ * @package Raylin666\Server\Callbacks
  */
-class ServerManager
+class OnManagerStop extends Callback
 {
-    use Container;
+    /**
+     * @var Server
+     */
+    public $server;
 
     /**
-     * @var array
+     * @param Server $server
      */
-    protected static $container = [];
+    public function __invoke(Server $server)
+    {
+        $this->server = $server;
+    }
 }

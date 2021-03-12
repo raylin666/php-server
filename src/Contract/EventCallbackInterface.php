@@ -9,20 +9,23 @@
 // | Author: kaka梦很美 <1099013371@qq.com>
 // +----------------------------------------------------------------------
 
-namespace Raylin666\Server;
-
-use Raylin666\Utils\Traits\Container;
+namespace Raylin666\Server\Contract;
 
 /**
- * Class ServerManager
- * @package Raylin666\Server
+ * Interface EventCallbackInterface
+ * @package Raylin666\Server\Contract
  */
-class ServerManager
+interface EventCallbackInterface
 {
-    use Container;
+    /**
+     * @param callable $callback
+     * @param int      $priority
+     * @return mixed
+     */
+    public function addCallback(callable $callback);
 
     /**
-     * @var array
+     * @return mixed
      */
-    protected static $container = [];
+    public function getCallbacks();
 }

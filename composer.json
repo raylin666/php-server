@@ -1,7 +1,7 @@
 {
   "name": "raylin666/server",
   "type": "library",
-  "description": "The underlying encapsulation of swoole service",
+  "description": "The underlying encapsulation of swoole service.",
   "keywords" : [
     "swoole",
     "php",
@@ -26,8 +26,7 @@
     "ext-swoole": ">=4.4.5",
     "ext-json": ">=1.0",
     "ext-openssl": ">=7.3",
-    "raylin666/util": "^1.0",
-    "raylin666/event": "^1.0"
+    "raylin666/utils": "^1.0"
   },
   "autoload": {
     "psr-4": {
@@ -35,9 +34,7 @@
     }
   },
   "autoload-dev": {
-    "psr-4": {
-      "Raylin666\\Server\\Tests\\": "tests/"
-    }
+    "psr-4": {}
   },
   "extra": {},
   "packages": {},

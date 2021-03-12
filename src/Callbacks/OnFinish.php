@@ -9,20 +9,40 @@
 // | Author: kaka梦很美 <1099013371@qq.com>
 // +----------------------------------------------------------------------
 
-namespace Raylin666\Server;
+namespace Raylin666\Server\Callbacks;
 
-use Raylin666\Utils\Traits\Container;
+use Swoole\Server;
 
 /**
- * Class ServerManager
- * @package Raylin666\Server
+ * Class OnFinish
+ * @package Raylin666\Server\Callbacks
  */
-class ServerManager
+class OnFinish extends Callback
 {
-    use Container;
+    /**
+     * @var Server
+     */
+    public $server;
 
     /**
-     * @var array
+     * @var int
      */
-    protected static $container = [];
+    public $taskId;
+
+    /**
+     * @var mixed
+     */
+    public $data;
+
+    /**
+     * @param Server $server
+     * @param int    $taskId
+     * @param mixed  $data
+     */
+    public function __invoke(Server $server, int $taskId, mixed $data)
+    {
+        $this->server = $server;
+        $this->taskId = $taskId;
+        $this->data = $data;
+    }
 }

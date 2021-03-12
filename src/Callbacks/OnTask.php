@@ -9,48 +9,47 @@
 // | Author: kaka梦很美 <1099013371@qq.com>
 // +----------------------------------------------------------------------
 
-namespace Raylin666\Server\Contract;
+namespace Raylin666\Server\Callbacks;
 
 use Swoole\Server;
-use Raylin666\Server\ServerConfig;
 
 /**
- * Interface ServerInterface
- * @package Raylin666\Server\Contract
+ * Class OnTask
+ * @package Raylin666\Server\Callbacks
  */
-interface ServerInterface
+class OnTask extends Callback
 {
     /**
-     * Http Service
+     * @var Server
      */
-    const SERVER_HTTP = 1;
+    public $server;
 
     /**
-     * Websocket Service
+     * @var int
      */
-    const SERVER_WEBSOCKET = 2;
+    public $taskId;
 
     /**
-     * Base Service
+     * @var int
      */
-    const SERVER_BASE = 3;
+    public $srcWorkerId;
 
     /**
-     * 初始化服务配置
-     * @param ServerConfig $config
-     * @return ServerInterface
+     * @var mixed
      */
-    public function init(ServerConfig $config): ServerInterface;
+    public $data;
 
     /**
-     * 服务启动
-     * @return mixed
+     * @param Server $server
+     * @param int    $taskId
+     * @param int    $srcWorkerId
+     * @param mixed  $data
      */
-    public function start();
-
-    /**
-     * 获取服务
-     * @return mixed|Server
-     */
-    public function getServer();
+    public function __invoke(Server $server, int $taskId, int $srcWorkerId, mixed $data)
+    {
+        $this->server = $server;
+        $this->taskId = $taskId;
+        $this->srcWorkerId = $srcWorkerId;
+        $this->data = $data;
+    }
 }

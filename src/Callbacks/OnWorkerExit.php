@@ -9,20 +9,33 @@
 // | Author: kaka梦很美 <1099013371@qq.com>
 // +----------------------------------------------------------------------
 
-namespace Raylin666\Server;
+namespace Raylin666\Server\Callbacks;
 
-use Raylin666\Utils\Traits\Container;
+use Swoole\Server;
 
 /**
- * Class ServerManager
- * @package Raylin666\Server
+ * Class OnWorkerExit
+ * @package Raylin666\Server\Callbacks
  */
-class ServerManager
+class OnWorkerExit extends Callback
 {
-    use Container;
+    /**
+     * @var Server
+     */
+    public $server;
 
     /**
-     * @var array
+     * @var int
      */
-    protected static $container = [];
+    public $workerId;
+
+    /**
+     * @param Server $server
+     * @param int    $workerId
+     */
+    public function __invoke(Server $server, int $workerId)
+    {
+        $this->server = $server;
+        $this->workerId = $workerId;
+    }
 }

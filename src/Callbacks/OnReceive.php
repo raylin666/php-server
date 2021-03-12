@@ -9,48 +9,47 @@
 // | Author: kaka梦很美 <1099013371@qq.com>
 // +----------------------------------------------------------------------
 
-namespace Raylin666\Server\Contract;
+namespace Raylin666\Server\Callbacks;
 
 use Swoole\Server;
-use Raylin666\Server\ServerConfig;
 
 /**
- * Interface ServerInterface
- * @package Raylin666\Server\Contract
+ * Class OnReceive
+ * @package Raylin666\Server\Callbacks
  */
-interface ServerInterface
+class OnReceive extends Callback
 {
     /**
-     * Http Service
+     * @var Server
      */
-    const SERVER_HTTP = 1;
+    public $server;
 
     /**
-     * Websocket Service
+     * @var int
      */
-    const SERVER_WEBSOCKET = 2;
+    public $fd;
 
     /**
-     * Base Service
+     * @var int
      */
-    const SERVER_BASE = 3;
+    public $reactorId;
 
     /**
-     * 初始化服务配置
-     * @param ServerConfig $config
-     * @return ServerInterface
+     * @var string
      */
-    public function init(ServerConfig $config): ServerInterface;
+    public $data;
 
     /**
-     * 服务启动
-     * @return mixed
+     * @param Server $server
+     * @param int    $fd
+     * @param int    $reactorId
+     * @param string $data
      */
-    public function start();
-
-    /**
-     * 获取服务
-     * @return mixed|Server
-     */
-    public function getServer();
+    public function __invoke(Server $server, int $fd, int $reactorId, string $data)
+    {
+        $this->server = $server;
+        $this->fd = $fd;
+        $this->reactorId = $reactorId;
+        $this->data = $data;
+    }
 }

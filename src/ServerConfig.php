@@ -89,6 +89,7 @@ class ServerConfig implements ArrayableInterface
         if (! $this->isAvailableProperty($name)) {
             throw new InvalidArgumentException(sprintf('Invalid property %s', $name));
         }
+
         return $this->config[$name] ?? null;
     }
 
@@ -138,7 +139,7 @@ class ServerConfig implements ArrayableInterface
      * @param string $name
      * @return bool
      */
-    private function isAvailableProperty(string $name)
+    private function isAvailableProperty(string $name): bool
     {
         return in_array($name, [
             'type', 'mode', 'servers', 'processes', 'settings', 'callbacks',

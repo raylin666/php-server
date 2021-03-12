@@ -9,20 +9,34 @@
 // | Author: kaka梦很美 <1099013371@qq.com>
 // +----------------------------------------------------------------------
 
-namespace Raylin666\Server;
+namespace Raylin666\Server\Callbacks;
 
-use Raylin666\Utils\Traits\Container;
+use Swoole\Http\Request;
+use Swoole\Http\Response;
 
 /**
- * Class ServerManager
- * @package Raylin666\Server
+ * Class OnRequest
+ * @package Raylin666\Server\Callbacks
  */
-class ServerManager
+class OnRequest extends Callback
 {
-    use Container;
+    /**
+     * @var Request
+     */
+    public $request;
 
     /**
-     * @var array
+     * @var Response
      */
-    protected static $container = [];
+    public $response;
+
+    /**
+     * @param Request  $request
+     * @param Response $response
+     */
+    public function __invoke(Request $request, Response $response)
+    {
+        $this->request = $request;
+        $this->response = $response;
+    }
 }

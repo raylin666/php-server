@@ -9,48 +9,40 @@
 // | Author: kaka梦很美 <1099013371@qq.com>
 // +----------------------------------------------------------------------
 
-namespace Raylin666\Server\Contract;
+namespace Raylin666\Server\Callbacks;
 
 use Swoole\Server;
-use Raylin666\Server\ServerConfig;
 
 /**
- * Interface ServerInterface
- * @package Raylin666\Server\Contract
+ * Class OnPipeMessage
+ * @package Raylin666\Server\Callbacks
  */
-interface ServerInterface
+class OnPipeMessage extends Callback
 {
     /**
-     * Http Service
+     * @var Server
      */
-    const SERVER_HTTP = 1;
+    public $server;
 
     /**
-     * Websocket Service
+     * @var int
      */
-    const SERVER_WEBSOCKET = 2;
+    public $srcWorkerId;
 
     /**
-     * Base Service
+     * @var mixed
      */
-    const SERVER_BASE = 3;
+    public $message;
 
     /**
-     * 初始化服务配置
-     * @param ServerConfig $config
-     * @return ServerInterface
+     * @param Server $server
+     * @param int    $srcWorkerId
+     * @param mixed  $message
      */
-    public function init(ServerConfig $config): ServerInterface;
-
-    /**
-     * 服务启动
-     * @return mixed
-     */
-    public function start();
-
-    /**
-     * 获取服务
-     * @return mixed|Server
-     */
-    public function getServer();
+    public function __invoke(Server $server, int $srcWorkerId, mixed $message)
+    {
+        $this->server = $server;
+        $this->srcWorkerId = $srcWorkerId;
+        $this->message = $message;
+    }
 }
