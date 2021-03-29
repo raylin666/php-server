@@ -13,7 +13,6 @@
     "server",
     "go"
   ],
-  "homepage": "https://github.com/raylin666/server",
   "license" : "Apache-2.0",
   "authors": [
     {
