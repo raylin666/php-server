@@ -26,7 +26,7 @@ use Raylin666\Server\Server;
 $server = new Server();
 
 /**
- * 注意(这里有个有趣的功能点): 
+ * 注意(这里有个灵活点): 
  *      下面的 $config 有 callbacks 配置, 默认情况下 Server 已经为你配置了所有的 Swoole 回调事件类。你可能想要修改或添加回调事件类，
  *      而 Server 已经为你提供了两个方案:
  *          方案一: 继承 \Raylin666\Server\Callbacks\... 对应的回调事件类, 在服务启动时, 继承后里面的方法都会被调用, 所以要保证类方法必须是 public, 每个方法的参数都是回调事件中的参数,
