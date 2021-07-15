@@ -11,13 +11,14 @@
 
 namespace Raylin666\Server;
 
+use Raylin666\Server\Contract\ServerManangerInterface;
 use Raylin666\Utils\Traits\Container;
 
 /**
  * Class ServerManager
  * @package Raylin666\Server
  */
-class ServerManager
+class ServerManager implements ServerManangerInterface
 {
     use Container;
 
